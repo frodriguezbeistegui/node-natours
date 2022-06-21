@@ -6,15 +6,16 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const rateLimit = require('express-rate-limit');
-const helmet = require('helmet')
+const helmet = require('helmet');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
+const hpp = require('hpp');
 
 const app = express();
 
 //  1) Global MIDDLEWARES
 // Security HTTP headers
-app.use(helmet())
+app.use(helmet());
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -29,13 +30,28 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // Body NavigationPreloadManager, reading data from body into req.body
-
 app.use(express.json({ limit: '10kb' }));
 
 // Data sanitization againsta NoSQL query Injection
-  app.use(mongoSanitize())
+app.use(mongoSanitize());
+
 // Data sanitization againsts XXS
-  app.use(xss())
+app.use(xss());
+
+// Prevent parameter polition
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  })
+);
+
 // serving static files
 app.use(express.static(`${__dirname}/public`));
 
