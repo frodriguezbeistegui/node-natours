@@ -120,6 +120,13 @@ const tourSchema = new mongoose.Schema(
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
+
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'tour',
+});
+
 // DOCUMENTE MIDDLEWARE: runs before .save() and .create() only, not insert many
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, {
