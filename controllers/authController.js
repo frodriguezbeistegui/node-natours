@@ -5,7 +5,6 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
 const crypto = require('crypto');
-const { remove } = require('../models/userModel');
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
