@@ -7,7 +7,12 @@ const router = express.Router({ mergeParams: true });
 router
   .route('/')
   .get(reviewController.getAllReviews)
-  .post(protect, restrictTo('user'), tree.createReview);
+  .post(
+    protect,
+    restrictTo('user'),
+    reviewController.setTourUserIds,
+    reviewController.createReview
+  );
 
 router
   .route('/:id')
