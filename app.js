@@ -1,18 +1,24 @@
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
+const path = require('path') 
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes')
-const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-const xss = require('xss-clean');
-const mongoSanitize = require('express-mongo-sanitize');
-const hpp = require('hpp');
 
 const app = express();
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'))
+// serving static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 //  1) Global MIDDLEWARES
 // Security HTTP headers
@@ -54,7 +60,6 @@ app.use(
 );
 
 // serving static files
-app.use(express.static(`${__dirname}/public`));
 
 // Test middleware
 app.use((req, res, next) => {
