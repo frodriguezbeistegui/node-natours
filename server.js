@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
-
 process.on('unhandledRejection', (err) => {
   console.log(err.name, err.message);
   console.log('UNHANDLER REJECTION! 💥 Shutting down...');
@@ -30,7 +29,6 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => console.log('DB connection succesfull'));
-
 
 const port = process.env.PORT || 3000;
 
