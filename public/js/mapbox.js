@@ -21,13 +21,13 @@ locations.forEach(loc => {
     element: el,
     anchor: 'bottom'
   })
-    .setLngLat(loc.coodinates)
+    .setLngLat(loc.coordinates)
     .addTo(map);
   // ADD POPUP
   new mapboxgl.Popup({
     offset: 30
   })
-    .setLngLat(loc.coodinates)
+    .setLngLat(loc.coordinates)
     .setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`)
     .addTo(map);
   // Extend map bounds to include current locatoin
