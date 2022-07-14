@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -5,7 +6,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
-const path = require('path');
+const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -44,6 +45,7 @@ app.use('/api', limiter);
 
 // Body NavigationPreloadManager, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
+app.use(cookieParser());
 
 // Data sanitization againsta NoSQL query Injection
 app.use(mongoSanitize());
@@ -68,6 +70,7 @@ app.use(
 // Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
+  // console.log(req.cookies);
   next();
 });
 
