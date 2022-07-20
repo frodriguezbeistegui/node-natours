@@ -1,5 +1,5 @@
 import axios from 'axios';
-import cookieParser from 'cookie-parser';
+// import cookieParser from 'cookie-parser';
 import { showAlert } from './alerts';
 
 export const login = async (email, password) => {
@@ -31,7 +31,7 @@ export const logout = async () => {
       method: 'GET',
       url: 'http://localhost:3000/api/v1/users/logout'
     });
-    if(res.data.status = 'success') location.reload(true)
+    if(res.data.status = 'success') location.assign('/');
   } catch (err) {
     console.log(err.response)
     showAlert('error', 'Error logging out! Try again.')
