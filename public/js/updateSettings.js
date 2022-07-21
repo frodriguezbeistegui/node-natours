@@ -1,29 +1,27 @@
-import axios from "axios"
+import axios from 'axios';
 import { showAlert } from './alerts';
 
-export const updateData =  async (name, email) => {
-    try{
-        const res = await axios({
-            method: 'PATCH',
-            url:'http://localhost:3000/api/v1/users/updateMe',
-            data: {
-                name,
-                email,
-            }
-        })
-        // const res = await axios.patch('http://localhost:3000/api/v1/users/updateMe', {
-        //       name,
-        //       email,
-        //     },
-        //   );
-    
-          if (res.data.status === 'success') {
-            showAlert('success', 'Data Updated successfully');
-            window.setTimeout(() => {
-                location.assign('/me');
-              }, 1500);
-            }
-    } catch (err) {
-        showAlert('error', err.response.data.message);
-      }
-}
+// type is either 'password' or 'data'
+export const updateSettings = async (data, type) => {
+  try {
+    const url =
+      type === 'password'
+        ? 'http://localhost:3000/api/v1/users/updateMyPassword'
+        : 'http://localhost:3000/api/v1/users/updateMe';
+    const res = await axios({
+      method: 'PATCH',
+      url,
+      data,
+    });
+    // const res = await axios.patch(url, data);
+
+    if (res.data.status === 'success') {
+      showAlert('success', `${type.toUppercase()} Updated successfully`);
+      window.setTimeout(() => {
+        location.assign('/me');
+      }, 1500);
+    }
+  } catch (err) {
+    showAlert('error', err.response.data.message);
+  }
+};
