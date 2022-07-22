@@ -11666,22 +11666,24 @@ if (userPasswordForm) {
           switch (_context.prev = _context.next) {
             case 0:
               e.preventDefault();
+              document.querySelector('.btn--save-password').textContent = 'Updating...';
               currentPassword = document.getElementById('password-current').value;
               password = document.getElementById('password').value;
               passwordConfirm = document.getElementById('password-confirm').value;
-              _context.next = 6;
+              _context.next = 7;
               return (0, _updateSettings.updateSettings)({
                 currentPassword: currentPassword,
                 password: password,
                 passwordConfirm: passwordConfirm
               }, 'password');
 
-            case 6:
+            case 7:
+              document.querySelector('.btn--save-password').textContent = 'Save password';
               document.getElementById('password-current').value = '';
               document.getElementById('password-confirm').value = '';
               document.getElementById('password').value = '';
 
-            case 9:
+            case 11:
             case "end":
               return _context.stop();
           }
