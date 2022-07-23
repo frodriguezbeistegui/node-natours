@@ -118,7 +118,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   res.locals.user = currentUser;
   next();
 });
-
 // Only for rendered pages, no errors
 exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
@@ -137,7 +136,6 @@ exports.isLoggedIn = async (req, res, next) => {
       if (currentUser.changedPasswordAfter(decoded.iat)) {
         return next();
       }
-
       // There is a logged in user
       res.locals.user = currentUser;
       return next();
