@@ -1,10 +1,15 @@
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const sendEmail = require('../utils/email');
-const crypto = require('crypto');
+const Email = require('../utils/email');
+
+const signToken = (id) =>
+  jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
@@ -30,11 +35,6 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
-const signToken = (id) =>
-  jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
@@ -45,6 +45,10 @@ exports.signup = catchAsync(async (req, res, next) => {
     startLocation: req.body.startLocation,
     locations: req.body.locations,
   });
+
+  const url = `${req.protocol}://${req.get('host')}/me`;
+  console.log(url);
+  await new Email(newUser, url).sendWelcome();
 
   createSendToken(newUser, 201, res);
 });
@@ -146,8 +150,9 @@ exports.isLoggedIn = async (req, res, next) => {
   next();
 };
 
-exports.restrictTo = (...roles) => {
-  return (req, res, next) => {
+exports.restrictTo =
+  (...roles) =>
+  (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       return next(
         new AppError('You do not have permission to perform this action', 403)
@@ -156,7 +161,6 @@ exports.restrictTo = (...roles) => {
 
     next();
   };
-};
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 1)Get user based on pOSTed email
@@ -168,18 +172,12 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
   // 3) Send it to user's email
-  const resetURL = `${req.protocol}://${req.get(
-    'host'
-  )}/api/v1/users/resetPassword/${resetToken}`;
-
-  const message = `Forgot your password? Submit a PATH request withyour new password and passwordConfirm to: ${resetURL}. If you didn't forget your password, please ignore this email! `;
-
   try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Your password reset token (falid for 10 min)',
-      message,
-    });
+    const resetURL = `${req.protocol}://${req.get(
+      'host'
+    )}/api/v1/users/resetPassword/${resetToken}`;
+
+    await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
