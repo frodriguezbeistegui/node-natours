@@ -27,8 +27,6 @@ exports.uploadTourImages = upload.fields([
 // upload.array('images', 5) for multiple images in the same field
 // Resizing images for the tour array
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
-  console.log(req.files);
-
   if (!req.files.imageCover || !req.files.images) return next();
   // 1) Cover image
   req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
@@ -165,7 +163,6 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
     startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
   });
 
-  console.log(distance, lat, lng, unit);
   res.status(200).json({
     status: 'success',
     results: tours.length,
