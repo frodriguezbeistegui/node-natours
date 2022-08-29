@@ -109,14 +109,14 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
-  // 4) Check if user changes password after the toekn was issued
+  // 4) Check if user changes password after the token was issued
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
       new AppError('User recently changed password! Please log in again.', 401)
     );
   }
 
-  // GRANT ACCEST TO PROTECTED ROUTE
+  // GRANT ACCESs TO PROTECTED ROUTE
   req.user = currentUser;
   res.locals.user = currentUser;
   next();
@@ -215,7 +215,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetExpires = undefined;
   await user.save();
 
-  // 3) Update changedPasswoerdAt property fot the user
+  // 3) Update changedPasswordAt property fot the user
 
   // 4) Log the user in, send JWT
 
@@ -226,7 +226,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // 1) get user from the collection
   const user = await User.findById(req.user.id).select('+password');
 
-  // 2) check if POSTed current password is corret
+  // 2) check if POSTed current password is correct
   if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
     return next(new AppError('Your current password is wrong', 401));
   }

@@ -54,13 +54,13 @@ app.use(
 );
 app.use(cookieParser());
 
-// Data sanitization againsta NoSQL query Injection
+// Data sanitization against NoSQL query Injection
 app.use(mongoSanitize());
 
-// Data sanitization againsts XXS
+// Data sanitization against XXS
 app.use(xss());
 
-// Prevent parameter polition
+// Prevent parameter pollution
 app.use(
   hpp({
     whitelist: [
